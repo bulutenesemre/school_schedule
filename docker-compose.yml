@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_DB: school
+      POSTGRES_USER: school
+      POSTGRES_PASSWORD: school
+
+  web:
+    build: .
+    command: gunicorn school_schedule.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DB_NAME=school
+      - DB_USER=school
+      - DB_PASSWORD=school
+      - DB_HOST=db
+      - DB_PORT=5432
+
+volumes:
+  postgres_data:
